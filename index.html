@@ -1,17 +1,272 @@
-<!DOCTYPE html>
-<html lang="en">
+<document onload="handleChange()">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
-  <title>Vanilla JavaScript App</title>
-</head>
+  <head>
+      <style>
+          /* Tooltip container */
+          .tooltip {
+              position: relative;
+              display: inline-block;
+              border-bottom: 1px dotted black;
+              /* If you want dots under the hoverable text */
+          }
 
-<body>
-  <main>
-    <h1>Vanilla JavaScript App</h1>
-  </main>
-</body>
+          /* Tooltip text */
+          .tooltip .tooltiptext {
+              visibility: hidden;
+              width: 120px;
+              background-color: #555;
+              color: #fff;
+              text-align: center;
+              padding: 5px 0;
+              border-radius: 6px;
 
-</html>
+              /* Position the tooltip text */
+              position: absolute;
+              z-index: 1;
+              bottom: 125%;
+              left: 50%;
+              margin-left: -60px;
+
+              /* Fade in tooltip */
+              opacity: 0;
+              transition: opacity 0.3s;
+          }
+
+          /* Tooltip arrow */
+          .tooltip .tooltiptext::after {
+              content: "";
+              position: absolute;
+              top: 100%;
+              left: 50%;
+              margin-left: -5px;
+              border-width: 5px;
+              border-style: solid;
+              border-color: #555 transparent transparent transparent;
+          }
+
+          /* Show the tooltip text when you mouse over the tooltip container */
+          .tooltip:hover .tooltiptext {
+              visibility: visible;
+              opacity: 1;
+          }
+      </style>
+
+      <script>
+          const periodeTussen = (begintijd, eindtijd) => {
+              const start = begintijd.split(":")
+              const startTijdMinuten = parseInt(start[0]) * 60 + parseInt(start[1])
+              const eind = eindtijd.split(":")
+              const eindTijdMinuten = parseInt(eind[0]) * 60 + parseInt(eind[1])
+              return (eindTijdMinuten - startTijdMinuten) / 60
+          }
+
+          const handleChange = (event) => {
+              console.log(`gather data and recalculate`)
+              const begintijd = document.getElementById('begintijd').value
+              const eindtijd = document.getElementById('eindtijd').value
+              const blaastestAantal = document.getElementById('blaastestAantal').value
+              const pcrtestAantal = document.getElementById('pcrtestAantal').value
+              const antigeentestAantal = document.getElementById('antigeentestAantal').value
+
+              const blaastestCapaciteit = document.getElementById('blaastestCapaciteit').value
+              const pcrtestCapaciteit = document.getElementById('pcrtestCapaciteit').value
+              const antigeentestCapaciteit = document.getElementById('antigeentestCapaciteit').value
+              const blaastestOnbepaaldPercentage = document.getElementById('blaastestOnbepaaldPercentage').value
+
+
+              console.log(`data: ${begintijd} tot ${eindtijd}`)
+              console.log(`data: ${blaastestAantal} ${pcrtestAantal} ${antigeentestAantal}`)
+              console.log(`data: ${pcrtestCapaciteit} ${antigeentestCapaciteit} ${blaastestOnbepaaldPercentage}`)
+              // berekening
+              const aantalUren = periodeTussen(begintijd, eindtijd)
+              const blaastestInvoer = aantalUren * blaastestCapaciteit * blaastestAantal
+              const blaastestOnbepaald = Math.round((blaastestOnbepaaldPercentage / 100) * blaastestInvoer)
+              const pcrtestInvoer = aantalUren * pcrtestCapaciteit * pcrtestAantal
+              const antigeentestVerwerkt = aantalUren * antigeentestCapaciteit * antigeentestAantal
+              const totaalVerwerkt = blaastestInvoer + pcrtestInvoer + antigeentestVerwerkt
+
+              console.log(`totaalverwerkt $(totaalVerwerkt)`)
+              // blaastestCapaciteit
+              document.getElementById('blaastestInvoer').firstChild.innerText = blaastestInvoer
+              document.getElementById('blaastestVerwerkt').firstChild.innerText = (blaastestInvoer - blaastestOnbepaald)
+              document.getElementById('pcrtestInvoer').firstChild.innerText = pcrtestInvoer
+              document.getElementById('pcrNaBlaastestVerwerkt').innerText = blaastestOnbepaald
+              document.getElementById('pcrZonderBlaastestVerwerkt').innerText = (pcrtestInvoer - blaastestOnbepaald)
+
+
+              document.getElementById('antigeentestInvoer').firstChild.innerText = antigeentestVerwerkt
+              document.getElementById('antigeentestVerwerkt').firstChild.innerText = antigeentestVerwerkt
+              document.getElementById('totaalVerwerkt').firstChild.innerText = totaalVerwerkt
+
+          }
+
+      </script>
+  </head>
+
+  <body>
+      <h1>Capaciteitanalyse Test-Locatie</h1>
+      <form>
+          <table>
+              <tbody>
+                  <tr>
+                      <td>
+                          <table>
+                              <tbody>
+                                  <tr>
+                                      <td>Begintijd</td>
+                                      <td class="tooltip"><input id="begintijd" type="text" value="07:00"
+                                              onchange="handleChange()">
+                                          <span class="tooltiptext">Begintijd, in uren en minuten; bijvoorbeeld 08:00,
+                                              13:55</span>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td>Eindtijd</td>
+                                      <td class="tooltip"><input id="eindtijd" type="text" value="20:00"
+                                              onchange="handleChange()" />
+                                          <span class="tooltiptext">Eindtijd, in uren en minuten; bijvoorbeeld 18:00,
+                                              20:55</span>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td style="background-color: #999999;">
+                          <h3>Parameters</h3>
+                          <table>
+                              <tbody>
+                                  <tr>
+                                      <td>Capaciteit per uur</td>
+                                      <td>&nbsp;</td>
+                                      <td>&nbsp;</td>
+                                  </tr>
+                                  <tr>
+                                      <td>Blaastest</td>
+                                      <td class="tooltip"><input id="blaastestCapaciteit" type="text" value="15"
+                                              onchange="handleChange()" />
+                                          <span class="tooltiptext">Hoeveel cliënten kan een blaastestruimte per uur
+                                              verwerken?</span>
+                                      </td>
+                                      <td>&nbsp;</td>
+
+                                  </tr>
+                                  <tr>
+                                      <td>PCR-test</td>
+                                      <td class="tooltip"><input id="pcrtestCapaciteit" type="text" value="20"
+                                              onchange="handleChange()" />
+                                          <span class="tooltiptext">Hoeveel cliënten kan een PCR-testruimte per uur
+                                              verwerken?</span>
+                                      </td>
+                                      <td>&nbsp;</td>
+                                  </tr>
+                                  <tr>
+                                      <td>Antigeen-test</td>
+                                      <td class="tooltip"><input id="antigeentestCapaciteit" type="text" value="20"
+                                              onchange="handleChange()" />
+                                          <span class="tooltiptext">Hoeveel cliënten kan een antigeen-testruimte per
+                                              uur verwerken?</span>
+
+                                      </td>
+                                      <td>&nbsp;</td>
+                                  </tr>
+                                  <tr>
+                                      <td>&nbsp;</td>
+                                      <td>&nbsp;</td>
+                                      <td>&nbsp;</td>
+                                  </tr>
+                                  <tr>
+                                      <td>&nbsp;% van blaastest onbepaald</td>
+                                      <td class="tooltip"><input id="blaastestOnbepaaldPercentage" type="text"
+                                              value="30" onchange="handleChange()" />%
+                                          <span class="tooltiptext">Welk percentage van de blaastest-uitkomsten is
+                                              onbepaald?</span>
+                                      </td>
+                                      <td>&nbsp;</td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td align="left">
+                          <div id="blaastestInvoer"><span
+                                  style="background-color: #ff0000; color: #ffffff;">570</span></div>
+                      </td>
+                      <td align="left">
+                          <div id="pcrtestInvoer"><span style="background-color: #ff0000; color: #ffffff;">1560</span>
+                          </div>
+                      </td>
+                      <td align="right">
+                          <div id="antigeentestInvoer"><span
+                                  style="background-color: #ff0000; color: #ffffff;">1300</span></div>
+                      </td>
+                      <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                      <td>
+                          <h2><span style="background-color: #ffff00;">Blaastest</span></h2>
+                      </td>
+                      <td>
+                          <h2><span style="background-color: #ffff00;">PCR Test</span></h2>
+                      </td>
+                      <td>
+                          <h2><span style="background-color: #ffff00;">Antigeen-Test</span></h2>
+                      </td>
+                      <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                      <td class="tooltip"><input id="blaastestAantal" type="text" value="3"
+                              onchange="handleChange()" /> 
+                              <span class="tooltiptext">Totaal aantal testruimten voor
+                              blaastests</span>
+                      </td>
+                      <td><input id="pcrtestAantal" type="text" value="6" onchange="handleChange()" /></td>
+                      <td><input id="antigeentestAantal" type="text" value="6" onchange="handleChange()" /></td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                      <td>
+                          <div id="blaastestVerwerkt"><span
+                                  style="background-color: #ff0000; color: #ffffff;">399</span></div>
+                      </td>
+                      <td>
+                          <table style="border-spacing: 15px;">
+                              <tbody>
+                                  <tr>
+                                      <td style="background-color: #ff0000; color: #ffffff; text-align: left;"
+                                          align="left"><span id="pcrNaBlaastestVerwerkt">171</span></td>
+                                      <td style="background-color: #ff0000; color: #ffffff;" align="right"><span
+                                              id="pcrZonderBlaastestVerwerkt">1389</span></td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </td>
+                      <td>
+                          <div id="antigeentestVerwerkt" style="background-color: #ff0000; color: #ffffff;">
+                              <span>1300</span>
+                          </div>
+                      </td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                      <td colspan="3">
+                          <div id="totaalVerwerkt" style="background-color: #ff0000;" align="center"><span
+                                  style="color: #ffffff;">3088</span></div>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </form>
+  </body>
+</document>
