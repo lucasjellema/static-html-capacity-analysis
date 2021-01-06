@@ -74,18 +74,14 @@
               const blaastestOnbepaaldPercentage = document.getElementById('blaastestOnbepaaldPercentage').value
 
 
-              console.log(`data: ${begintijd} tot ${eindtijd}`)
-              console.log(`data: ${blaastestAantal} ${pcrtestAantal} ${antigeentestAantal}`)
-              console.log(`data: ${pcrtestCapaciteit} ${antigeentestCapaciteit} ${blaastestOnbepaaldPercentage}`)
               // berekening
               const aantalUren = periodeTussen(begintijd, eindtijd)
-              const blaastestInvoer = aantalUren * blaastestCapaciteit * blaastestAantal
+              const blaastestInvoer = Math.round(aantalUren * blaastestCapaciteit * blaastestAantal)
               const blaastestOnbepaald = Math.round((blaastestOnbepaaldPercentage / 100) * blaastestInvoer)
-              const pcrtestInvoer = aantalUren * pcrtestCapaciteit * pcrtestAantal
-              const antigeentestVerwerkt = aantalUren * antigeentestCapaciteit * antigeentestAantal
-              const totaalVerwerkt = blaastestInvoer + pcrtestInvoer + antigeentestVerwerkt
+              const pcrtestInvoer = Math.round(aantalUren * pcrtestCapaciteit * pcrtestAantal)
+              const antigeentestVerwerkt = Math.round(aantalUren * antigeentestCapaciteit * antigeentestAantal)
+              const totaalVerwerkt = Math.round(blaastestInvoer + pcrtestInvoer + antigeentestVerwerkt)
 
-              console.log(`totaalverwerkt $(totaalVerwerkt)`)
               // blaastestCapaciteit
               document.getElementById('blaastestInvoer').firstChild.innerText = blaastestInvoer
               document.getElementById('blaastestVerwerkt').firstChild.innerText = (blaastestInvoer - blaastestOnbepaald)
@@ -147,7 +143,7 @@
                                       <td>Blaastest</td>
                                       <td class="tooltip"><input id="blaastestCapaciteit" type="text" value="15"
                                               onchange="handleChange()" />
-                                          <span class="tooltiptext">Hoeveel cliënten kan een blaastestruimte per uur
+                                          <span class="tooltiptext">Hoeveel testen kan een blaastestruimte per uur
                                               verwerken?</span>
                                       </td>
                                       <td>&nbsp;</td>
@@ -157,7 +153,7 @@
                                       <td>PCR-test</td>
                                       <td class="tooltip"><input id="pcrtestCapaciteit" type="text" value="20"
                                               onchange="handleChange()" />
-                                          <span class="tooltiptext">Hoeveel cliënten kan een PCR-testruimte per uur
+                                          <span class="tooltiptext">Hoeveel testen kan een PCR-testruimte per uur
                                               verwerken?</span>
                                       </td>
                                       <td>&nbsp;</td>
@@ -166,7 +162,7 @@
                                       <td>Antigeen-test</td>
                                       <td class="tooltip"><input id="antigeentestCapaciteit" type="text" value="20"
                                               onchange="handleChange()" />
-                                          <span class="tooltiptext">Hoeveel cliënten kan een antigeen-testruimte per
+                                          <span class="tooltiptext">Hoeveel testen kan een antigeen-testruimte per
                                               uur verwerken?</span>
 
                                       </td>
@@ -223,8 +219,10 @@
                               <span class="tooltiptext">Totaal aantal testruimten voor
                               blaastests</span>
                       </td>
-                      <td><input id="pcrtestAantal" type="text" value="6" onchange="handleChange()" /></td>
-                      <td><input id="antigeentestAantal" type="text" value="6" onchange="handleChange()" /></td>
+                      <td ><div class="tooltip"><input id="pcrtestAantal" type="text" value="6" onchange="handleChange()" /> <span class="tooltiptext">Totaal aantal testruimten voor
+                              PCR-tests</span></div></td>
+                              <td ><div class="tooltip"><input id="antigeentestAantal" type="text" value="6" onchange="handleChange()" /> <span class="tooltiptext">Totaal aantal testruimten voor
+                              Antigeen-tests</span></div></td>
                       <td>&nbsp;</td>
                       <td>&nbsp;</td>
                   </tr>
