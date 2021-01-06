@@ -1,270 +1,287 @@
-<document onload="handleChange()">
+<document>
 
   <head>
-      <style>
-          /* Tooltip container */
-          .tooltip {
-              position: relative;
-              display: inline-block;
-              border-bottom: 1px dotted black;
-              /* If you want dots under the hoverable text */
-          }
+    <style>
+      /* Tooltip container */
+      .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+        /* If you want dots under the hoverable text */
+      }
 
-          /* Tooltip text */
-          .tooltip .tooltiptext {
-              visibility: hidden;
-              width: 120px;
-              background-color: #555;
-              color: #fff;
-              text-align: center;
-              padding: 5px 0;
-              border-radius: 6px;
+      /* Tooltip text */
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
 
-              /* Position the tooltip text */
-              position: absolute;
-              z-index: 1;
-              bottom: 125%;
-              left: 50%;
-              margin-left: -60px;
+        /* Position the tooltip text */
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
 
-              /* Fade in tooltip */
-              opacity: 0;
-              transition: opacity 0.3s;
-          }
+        /* Fade in tooltip */
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
 
-          /* Tooltip arrow */
-          .tooltip .tooltiptext::after {
-              content: "";
-              position: absolute;
-              top: 100%;
-              left: 50%;
-              margin-left: -5px;
-              border-width: 5px;
-              border-style: solid;
-              border-color: #555 transparent transparent transparent;
-          }
+      /* Tooltip arrow */
+      .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+      }
 
-          /* Show the tooltip text when you mouse over the tooltip container */
-          .tooltip:hover .tooltiptext {
-              visibility: visible;
-              opacity: 1;
-          }
-      </style>
+      /* Show the tooltip text when you mouse over the tooltip container */
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
 
-      <script>
-          const periodeTussen = (begintijd, eindtijd) => {
-              const start = begintijd.split(":")
-              const startTijdMinuten = parseInt(start[0]) * 60 + parseInt(start[1])
-              const eind = eindtijd.split(":")
-              const eindTijdMinuten = parseInt(eind[0]) * 60 + parseInt(eind[1])
-              return (eindTijdMinuten - startTijdMinuten) / 60
-          }
+      .tooltip .tooltiptext-left {
+        margin-left: -10px;
+      }
 
-          const handleChange = (event) => {
-              console.log(`gather data and recalculate`)
-              const begintijd = document.getElementById('begintijd').value
-              const eindtijd = document.getElementById('eindtijd').value
-              const blaastestAantal = document.getElementById('blaastestAantal').value
-              const pcrtestAantal = document.getElementById('pcrtestAantal').value
-              const antigeentestAantal = document.getElementById('antigeentestAantal').value
+      /* Tooltip arrow */
+      .tooltip .tooltiptext-left::after {
+        margin-left: -53px;
+      }
+    </style>
 
-              const blaastestCapaciteit = document.getElementById('blaastestCapaciteit').value
-              const pcrtestCapaciteit = document.getElementById('pcrtestCapaciteit').value
-              const antigeentestCapaciteit = document.getElementById('antigeentestCapaciteit').value
-              const blaastestOnbepaaldPercentage = document.getElementById('blaastestOnbepaaldPercentage').value
+    <script>
+      const periodeTussen = (begintijd, eindtijd) => {
+        const start = begintijd.split(":")
+        const startTijdMinuten = parseInt(start[0]) * 60 + parseInt(start[1])
+        const eind = eindtijd.split(":")
+        const eindTijdMinuten = parseInt(eind[0]) * 60 + parseInt(eind[1])
+        return (eindTijdMinuten - startTijdMinuten) / 60
+      }
 
+      const handleChange = (event) => {
+        console.log(`gather data and recalculate`)
+        const begintijd = document.getElementById('begintijd').value
+        const eindtijd = document.getElementById('eindtijd').value
+        const blaastestAantal = document.getElementById('blaastestAantal').value
+        const pcrtestAantal = document.getElementById('pcrtestAantal').value
+        const antigeentestAantal = document.getElementById('antigeentestAantal').value
 
-              // berekening
-              const aantalUren = periodeTussen(begintijd, eindtijd)
-              const blaastestInvoer = Math.round(aantalUren * blaastestCapaciteit * blaastestAantal)
-              const blaastestOnbepaald = Math.round((blaastestOnbepaaldPercentage / 100) * blaastestInvoer)
-              const pcrtestInvoer = Math.round(aantalUren * pcrtestCapaciteit * pcrtestAantal)
-              const antigeentestVerwerkt = Math.round(aantalUren * antigeentestCapaciteit * antigeentestAantal)
-              const totaalVerwerkt = Math.round(blaastestInvoer + pcrtestInvoer + antigeentestVerwerkt)
-
-              // blaastestCapaciteit
-              document.getElementById('blaastestInvoer').firstChild.innerText = blaastestInvoer
-              document.getElementById('blaastestVerwerkt').firstChild.innerText = (blaastestInvoer - blaastestOnbepaald)
-              document.getElementById('pcrtestInvoer').firstChild.innerText = pcrtestInvoer
-              document.getElementById('pcrNaBlaastestVerwerkt').innerText = blaastestOnbepaald
-              document.getElementById('pcrZonderBlaastestVerwerkt').innerText = (pcrtestInvoer - blaastestOnbepaald)
+        const blaastestCapaciteit = document.getElementById('blaastestCapaciteit').value
+        const pcrtestCapaciteit = document.getElementById('pcrtestCapaciteit').value
+        const antigeentestCapaciteit = document.getElementById('antigeentestCapaciteit').value
+        const blaastestOnbepaaldPercentage = document.getElementById('blaastestOnbepaaldPercentage').value
 
 
-              document.getElementById('antigeentestInvoer').firstChild.innerText = antigeentestVerwerkt
-              document.getElementById('antigeentestVerwerkt').firstChild.innerText = antigeentestVerwerkt
-              document.getElementById('totaalVerwerkt').firstChild.innerText = totaalVerwerkt
+        // berekening
+        const aantalUren = periodeTussen(begintijd, eindtijd)
+        const blaastestInvoer = Math.round(aantalUren * blaastestCapaciteit * blaastestAantal)
+        const blaastestOnbepaald = Math.round((blaastestOnbepaaldPercentage / 100) * blaastestInvoer)
+        const pcrtestInvoer = Math.round(aantalUren * pcrtestCapaciteit * pcrtestAantal)
+        const antigeentestVerwerkt = Math.round(aantalUren * antigeentestCapaciteit * antigeentestAantal)
+        const totaalVerwerkt = Math.round(blaastestInvoer + pcrtestInvoer - blaastestOnbepaald + antigeentestVerwerkt)
 
-          }
+        // blaastestCapaciteit
+        document.getElementById('blaastestInvoer').firstChild.innerText = blaastestInvoer
+        document.getElementById('blaastestVerwerkt').firstChild.innerText = (blaastestInvoer - blaastestOnbepaald)
+        document.getElementById('pcrtestInvoer').firstChild.innerText = pcrtestInvoer
+        document.getElementById('pcrNaBlaastestVerwerkt').innerText = blaastestOnbepaald
+        document.getElementById('pcrZonderBlaastestVerwerkt').innerText = (pcrtestInvoer - blaastestOnbepaald)
 
-      </script>
+
+        document.getElementById('antigeentestInvoer').firstChild.innerText = antigeentestVerwerkt
+        document.getElementById('antigeentestVerwerkt').firstChild.innerText = antigeentestVerwerkt
+        document.getElementById('totaalVerwerkt').firstChild.innerText = totaalVerwerkt
+
+      }
+
+    </script>
   </head>
 
-  <body>
-      <h1>Capaciteitanalyse Test-Locatie</h1>
-      <form>
-          <table>
-              <tbody>
+  <body onload="handleChange()">
+    <h1>Capaciteitanalyse Test-Locatie</h1>
+    <form>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <table>
+                <tbody>
                   <tr>
-                      <td>
-                          <table>
-                              <tbody>
-                                  <tr>
-                                      <td>Begintijd</td>
-                                      <td class="tooltip"><input id="begintijd" type="text" value="07:00"
-                                              onchange="handleChange()">
-                                          <span class="tooltiptext">Begintijd, in uren en minuten; bijvoorbeeld 08:00,
-                                              13:55</span>
-                                      </td>
-                                  </tr>
-                                  <tr>
-                                      <td>Eindtijd</td>
-                                      <td class="tooltip"><input id="eindtijd" type="text" value="20:00"
-                                              onchange="handleChange()" />
-                                          <span class="tooltiptext">Eindtijd, in uren en minuten; bijvoorbeeld 18:00,
-                                              20:55</span>
-                                      </td>
-                                  </tr>
-                              </tbody>
-                          </table>
-                      </td>
-                      <td>&nbsp;</td>
-                      <td>&nbsp;</td>
-                      <td>&nbsp;</td>
-                      <td style="background-color: #999999;">
-                          <h3>Parameters</h3>
-                          <table>
-                              <tbody>
-                                  <tr>
-                                      <td>Capaciteit per uur</td>
-                                      <td>&nbsp;</td>
-                                      <td>&nbsp;</td>
-                                  </tr>
-                                  <tr>
-                                      <td>Blaastest</td>
-                                      <td class="tooltip"><input id="blaastestCapaciteit" type="text" value="15"
-                                              onchange="handleChange()" />
-                                          <span class="tooltiptext">Hoeveel testen kan een blaastestruimte per uur
-                                              verwerken?</span>
-                                      </td>
-                                      <td>&nbsp;</td>
+                    <td>Begintijd</td>
+                    <td class="tooltip"><input id="begintijd" type="text" value="07:00" onchange="handleChange()">
+                      <span class="tooltiptext">Begintijd, in uren en minuten; bijvoorbeeld 08:00,
+                        13:55</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Eindtijd</td>
+                    <td class="tooltip"><input id="eindtijd" type="text" value="20:00" onchange="handleChange()" />
+                      <span class="tooltiptext">Eindtijd, in uren en minuten; bijvoorbeeld 18:00,
+                        20:55</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td style="background-color: #999999;">
+              <h3>Parameters</h3>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>Capaciteit per uur</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>Blaastest</td>
+                    <td class="tooltip"><input id="blaastestCapaciteit" type="text" value="15"
+                        onchange="handleChange()" />
+                      <span class="tooltiptext">Hoeveel testen kan een blaastestruimte per uur
+                        verwerken?</span>
+                    </td>
+                    <td>&nbsp;</td>
 
-                                  </tr>
-                                  <tr>
-                                      <td>PCR-test</td>
-                                      <td class="tooltip"><input id="pcrtestCapaciteit" type="text" value="20"
-                                              onchange="handleChange()" />
-                                          <span class="tooltiptext">Hoeveel testen kan een PCR-testruimte per uur
-                                              verwerken?</span>
-                                      </td>
-                                      <td>&nbsp;</td>
-                                  </tr>
-                                  <tr>
-                                      <td>Antigeen-test</td>
-                                      <td class="tooltip"><input id="antigeentestCapaciteit" type="text" value="20"
-                                              onchange="handleChange()" />
-                                          <span class="tooltiptext">Hoeveel testen kan een antigeen-testruimte per
-                                              uur verwerken?</span>
+                  </tr>
+                  <tr>
+                    <td>PCR-test</td>
+                    <td class="tooltip"><input id="pcrtestCapaciteit" type="text" value="20"
+                        onchange="handleChange()" />
+                      <span class="tooltiptext">Hoeveel testen kan een PCR-testruimte per uur
+                        verwerken?</span>
+                    </td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>Antigeen-test</td>
+                    <td class="tooltip"><input id="antigeentestCapaciteit" type="text" value="20"
+                        onchange="handleChange()" />
+                      <span class="tooltiptext">Hoeveel testen kan een antigeen-testruimte per
+                        uur verwerken?</span>
 
-                                      </td>
-                                      <td>&nbsp;</td>
-                                  </tr>
-                                  <tr>
-                                      <td>&nbsp;</td>
-                                      <td>&nbsp;</td>
-                                      <td>&nbsp;</td>
-                                  </tr>
-                                  <tr>
-                                      <td>&nbsp;% van blaastest onbepaald</td>
-                                      <td class="tooltip"><input id="blaastestOnbepaaldPercentage" type="text"
-                                              value="30" onchange="handleChange()" />%
-                                          <span class="tooltiptext">Welk percentage van de blaastest-uitkomsten is
-                                              onbepaald?</span>
-                                      </td>
-                                      <td>&nbsp;</td>
-                                  </tr>
-                              </tbody>
-                          </table>
-                      </td>
+                    </td>
+                    <td>&nbsp;</td>
                   </tr>
                   <tr>
-                      <td align="left">
-                          <div id="blaastestInvoer"><span
-                                  style="background-color: #ff0000; color: #ffffff;">570</span></div>
-                      </td>
-                      <td align="left">
-                          <div id="pcrtestInvoer"><span style="background-color: #ff0000; color: #ffffff;">1560</span>
-                          </div>
-                      </td>
-                      <td align="right">
-                          <div id="antigeentestInvoer"><span
-                                  style="background-color: #ff0000; color: #ffffff;">1300</span></div>
-                      </td>
-                      <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
                   </tr>
                   <tr>
-                      <td>
-                          <h2><span style="background-color: #ffff00;">Blaastest</span></h2>
-                      </td>
-                      <td>
-                          <h2><span style="background-color: #ffff00;">PCR Test</span></h2>
-                      </td>
-                      <td>
-                          <h2><span style="background-color: #ffff00;">Antigeen-Test</span></h2>
-                      </td>
-                      <td>&nbsp;</td>
+                    <td>&nbsp;% van blaastest onbepaald</td>
+                    <td class="tooltip"><input id="blaastestOnbepaaldPercentage" type="text" value="30"
+                        onchange="handleChange()" />%
+                      <span class="tooltiptext">Welk percentage van de blaastest-uitkomsten is
+                        onbepaald?</span>
+                    </td>
+                    <td>&nbsp;</td>
                   </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td align="left">
+              <div id="blaastestInvoer"  class="tooltip"><span style="background-color: #ff0000; color: #ffffff;"></span><span class="tooltiptext-left tooltiptext">Totaal aantal uitgevoerde blaas-testen</span></div>
+            </td>
+            <td align="left">
+              <div id="pcrtestInvoer"  class="tooltip"><span style="background-color: #ff0000; color: #ffffff;"></span><span class="tooltiptext">Totaal aantal uitgevoerde PCR-testen</span>
+              </div>
+            </td>
+            <td align="right">
+              <div id="antigeentestInvoer" class="tooltip"><span style="background-color: #ff0000; color: #ffffff;"></span><span class="tooltiptext">Totaal aantal uitgevoerde antigeen-testen</span></div>
+            </td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>
+              <h2><span style="background-color: #ffff00;">Blaastest</span></h2>
+            </td>
+            <td>
+              <h2><span style="background-color: #ffff00;">PCR Test</span></h2>
+            </td>
+            <td>
+              <h2><span style="background-color: #ffff00;">Antigeen-Test</span></h2>
+            </td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="tooltip"><input id="blaastestAantal" type="text" value="3" onchange="handleChange()" />
+              <span class="tooltiptext">Totaal aantal testruimten voor
+                blaastests</span>
+            </td>
+            <td>
+              <div class="tooltip"><input id="pcrtestAantal" type="text" value="6" onchange="handleChange()" /> <span
+                  class="tooltiptext">Totaal aantal testruimten voor
+                  PCR-tests</span></div>
+            </td>
+            <td>
+              <div class="tooltip"><input id="antigeentestAantal" type="text" value="6"
+                  onchange="handleChange()" /><span class="tooltiptext">Totaal aantal testruimten voor
+                  Antigeen-tests</span></div>
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>
+              <div id="blaastestVerwerkt" class="tooltip"><span style="background-color: #ff0000; color: #ffffff;">399</span><span class="tooltiptext-left tooltiptext">Aantal uitgevoerde blaas-testen met uitslag <i>negatief</i></i></span></div>
+            </td>
+            <td>
+              <table style="border-spacing: 15px;">
+                <tbody>
                   <tr>
-                      <td class="tooltip"><input id="blaastestAantal" type="text" value="3"
-                              onchange="handleChange()" /> 
-                              <span class="tooltiptext">Totaal aantal testruimten voor
-                              blaastests</span>
-                      </td>
-                      <td ><div class="tooltip"><input id="pcrtestAantal" type="text" value="6" onchange="handleChange()" /> <span class="tooltiptext">Totaal aantal testruimten voor
-                              PCR-tests</span></div></td>
-                              <td ><div class="tooltip"><input id="antigeentestAantal" type="text" value="6" onchange="handleChange()" /> <span class="tooltiptext">Totaal aantal testruimten voor
-                              Antigeen-tests</span></div></td>
-                      <td>&nbsp;</td>
-                      <td>&nbsp;</td>
+                    <td style="background-color: #ff0000; color: #ffffff;" align="right">
+                      <div class="tooltip"><span id="pcrNaBlaastestVerwerkt"></span><span class="tooltiptext">Totaal
+                          aantal uitgevoerde PCR-testen voor personen die eerst een blaastest (met uitslag <i>onbepaald</i>)
+                          hebben gedaan</span></div>
+                    </td>
+
+                    <td style="background-color: #ff0000; color: #ffffff;" align="right">
+                      <div class="tooltip"><span id="pcrZonderBlaastestVerwerkt"></span><span class="tooltiptext">Totaal
+                          aantal direct uitgevoerde PCR-testen (voor personen die niet eerst een blaastest hebben
+                          gedaan)</span></div>
+                    </td>
                   </tr>
-                  <tr>
-                      <td>&nbsp;</td>
-                      <td>&nbsp;</td>
-                      <td>&nbsp;</td>
-                      <td>&nbsp;</td>
-                  </tr>
-                  <tr>
-                      <td>
-                          <div id="blaastestVerwerkt"><span
-                                  style="background-color: #ff0000; color: #ffffff;">399</span></div>
-                      </td>
-                      <td>
-                          <table style="border-spacing: 15px;">
-                              <tbody>
-                                  <tr>
-                                      <td style="background-color: #ff0000; color: #ffffff; text-align: left;"
-                                          align="left"><span id="pcrNaBlaastestVerwerkt">171</span></td>
-                                      <td style="background-color: #ff0000; color: #ffffff;" align="right"><span
-                                              id="pcrZonderBlaastestVerwerkt">1389</span></td>
-                                  </tr>
-                              </tbody>
-                          </table>
-                      </td>
-                      <td>
-                          <div id="antigeentestVerwerkt" style="background-color: #ff0000; color: #ffffff;">
-                              <span>1300</span>
-                          </div>
-                      </td>
-                      <td>&nbsp;</td>
-                      <td>&nbsp;</td>
-                  </tr>
-                  <tr>
-                      <td colspan="3">
-                          <div id="totaalVerwerkt" style="background-color: #ff0000;" align="center"><span
-                                  style="color: #ffffff;">3088</span></div>
-                      </td>
-                  </tr>
-              </tbody>
-          </table>
-      </form>
+                </tbody>
+              </table>
+            </td>
+            <td>
+              <div id="antigeentestVerwerkt"  class="tooltip" style="background-color: #ff0000; color: #ffffff;"><span></span><span class="tooltiptext">Totaal
+                          aantal uitgevoerde antigeen-testen</span>
+              </div>
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <div  style="background-color: #ff0000;" align="center"><div id="totaalVerwerkt"  class="tooltip"><span
+                  style="color: #ffffff;"></span><span class="tooltiptext">Totaal
+                          aantal personen getest op de locatie (kleiner dan het aantal testen, vanwege PCR-test in geval van onbepaald blaastest-resultaat)</span></div></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
   </body>
 </document>
